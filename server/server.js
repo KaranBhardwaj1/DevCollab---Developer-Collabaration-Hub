@@ -30,7 +30,7 @@ const io = new Server(server, {
   cors: {
     origin: [
       "http://localhost:5173",
-      "https://dev-collab-developer-collabaration-nine.vercel.app",
+      "https://dev-collab-developer-collabaration-nine.vercel.app/",
     ],
     methods: ["GET", "POST"],
   },
@@ -41,7 +41,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://dev-collab-developer-collabaration-nine.vercel.app",
+      "https://dev-collab-developer-collabaration-nine.vercel.app/",
     ],
   })
 );
