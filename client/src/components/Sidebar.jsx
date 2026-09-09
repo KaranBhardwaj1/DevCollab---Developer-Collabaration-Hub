@@ -2,37 +2,27 @@ import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const mainLinks = [
-    {
-      name: "Dashboard",
-      path: "/dashboard",
-      icon: "🏠",
-    },
-    {
-      name: "Projects",
-      path: "/projects",
-      icon: "📁",
-    },
-    {
-      name: "Tasks",
-      path: "/tasks",
-      icon: "✅",
-    },
-    {
-      name: "Team Chat",
-      path: "/team-chat",
-      icon: "💬",
-    },
-    {
-      name: "Team Compiler",
-      path: "/team-compiler",
-      icon: "💻",
-    },
-    {
-      name: "Invitations",
-      path: "/invitations",
-      icon: "📨",
-    },
-  ];
+  {
+    name: "Dashboard",
+    path: "/dashboard",
+    icon: "🏠",
+  },
+  {
+    name: "Projects",
+    path: "/projects",
+    icon: "📁",
+  },
+  {
+    name: "Tasks",
+    path: "/tasks",
+    icon: "✅",
+  },
+  {
+    name: "Invitations",
+    path: "/invitations",
+    icon: "📨",
+  },
+];
 
   const devConnectLinks = [
     {
@@ -60,7 +50,7 @@ const Sidebar = () => {
         <div>
           <h1 className="text-center text-4xl font-black tracking-tight">
   <span className="text-slate-900">Dev</span>
-  <span className="bg-gradient-to-r from-blue-500 via-cyan-500 to-indigo-600 bg-clip-text text-transparent">
+  <span className="bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent">
     Collab
   </span>
 </h1>
