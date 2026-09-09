@@ -7,7 +7,7 @@ import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
 const SOCKET_URL =
-  import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
+   "https://devcollab-developer-collabaration-hub.onrender.com" || "http://localhost:5000";
 
 const DEFAULT_CODE = `public class Main {
     public static void main(String[] args) {
