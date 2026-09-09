@@ -259,3 +259,65 @@ module.exports = {
   getTeamCodeResult,
   getLanguages,
 };
+// Run code in the public DevConnect compiler.
+const runGlobalCode = async (req, res) => {
+  try {
+    const { sourceCode, languageId, stdin = "" } = req.body;
+    if (!sourceCode?.trim()) return res.status(400).json({ message: "Source code is required" });
+    if (!languageId) return res.status(400).json({ message: "Language is required" });
+
+    const submissionResponse = await fetch(
+      `${JUDGE0_URL}/submissions/?base64_encoded=false&wait=false`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(process.env.JUDGE0_AUTH_TOKEN ? { "X-Auth-Token": process.env.JUDGE0_AUTH_TOKEN } : {}),
+        },
+        body: JSON.stringify({
+          source_code: sourceCode,
+          language_id: Number(languageId),
+          stdin,
+          cpu_time_limit: 2,
+          wall_time_limit: 5,
+          memory_limit: 128000,
+          max_processes_and_or_threads: 20,
+          max_file_size: 2048,
+          enable_network: false,
+        }),
+      }
+    );
+
+    if (!submissionResponse.ok) {
+      console.error("Global Judge0 error:", await submissionResponse.text());
+      return res.status(502).json({ message: "Code execution service failed" });
+    }
+
+    const submission = await submissionResponse.json();
+    res.status(202).json({ message: "Code submitted successfully", token: submission.token });
+  } catch (error) {
+    console.error("Global compiler error:", error);
+    res.status(500).json({ message: "Unable to run code" });
+  }
+};
+
+const getGlobalCodeResult = async (req, res) => {
+  try {
+    const resultResponse = await fetch(
+      `${JUDGE0_URL}/submissions/${req.params.token}?base64_encoded=false`,
+      {
+        headers: {
+          ...(process.env.JUDGE0_AUTH_TOKEN ? { "X-Auth-Token": process.env.JUDGE0_AUTH_TOKEN } : {}),
+        },
+      }
+    );
+    if (!resultResponse.ok) return res.status(502).json({ message: "Unable to retrieve execution result" });
+    res.json(await resultResponse.json());
+  } catch (error) {
+    console.error("Global compiler result error:", error);
+    res.status(500).json({ message: "Unable to retrieve compiler result" });
+  }
+};
+
+module.exports.runGlobalCode = runGlobalCode;
+module.exports.getGlobalCodeResult = getGlobalCodeResult;

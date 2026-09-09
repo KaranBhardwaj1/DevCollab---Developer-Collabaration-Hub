@@ -6,6 +6,8 @@ const {
   runTeamCode,
   getTeamCodeResult,
   getLanguages,
+  runGlobalCode,
+  getGlobalCodeResult,
 } = require("../controllers/compilerController");
 
 const router = express.Router();
@@ -26,5 +28,8 @@ router.get(
   "/team/:projectId/result/:token",
   getTeamCodeResult
 );
+
+router.post("/global/run", runGlobalCode);
+router.get("/global/result/:token", getGlobalCodeResult);
 
 module.exports = router;

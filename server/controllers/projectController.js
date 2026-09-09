@@ -136,9 +136,9 @@ const addMember = async (req, res) => {
     );
 
     if (
-  !currentMember ||
-  currentMember.role !== "owner"
-) {
+      !currentMember ||
+      !currentMember.role === "owner"
+    ) {
       return res.status(403).json({
         message: "You do not have permission to add members",
       });
@@ -213,13 +213,13 @@ const removeMember = async (req, res) => {
     );
 
     if (
-  !currentMember ||
-  currentMember.role !== "owner"
-) {
-  return res.status(403).json({
-    message: "You do not have permission to remove members",
-  });
-}
+      !currentMember ||
+      !currentMember.role === "owner"
+    ) {
+      return res.status(403).json({
+        message: "You do not have permission to remove members",
+      });
+    }
 
     if (userId.toString() === project.owner.toString()) {
       return res.status(400).json({

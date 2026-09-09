@@ -7,13 +7,11 @@ const User = require("../models/User");
 // =========================
 const sendInvitation = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId, email } = req.body;
     const { id: projectId } = req.params;
 
-    if (!userId) {
-      return res.status(400).json({
-        message: "User ID is required",
-      });
+    if (!userId && !email) {
+      return res.status(400).json({ message: "User ID or email is required" });
     }
 
     const project = await Project.findById(projectId);
@@ -32,7 +30,7 @@ const sendInvitation = async (req, res) => {
 
     if (
       !senderMember ||
-      !["owner", "admin"].includes(senderMember.role)
+      !senderMember.role === "owner"
     ) {
       return res.status(403).json({
         message: "You do not have permission to invite members",
@@ -40,7 +38,11 @@ const sendInvitation = async (req, res) => {
     }
 
     // Check receiver
-    const receiver = await User.findById(userId);
+    const receiver = userId
+      ? await User.findById(userId)
+      : await User.findOne({ email: email.toLowerCase().trim() });
+
+    const receiverId = receiver?._id;
 
     if (!receiver) {
       return res.status(404).json({
@@ -51,7 +53,7 @@ const sendInvitation = async (req, res) => {
     // Check if already a member
     const alreadyMember = project.members.some(
       (member) =>
-        member.user.toString() === userId.toString()
+        member.user.toString() === receiverId.toString()
     );
 
     if (alreadyMember) {
@@ -63,7 +65,7 @@ const sendInvitation = async (req, res) => {
     // Check pending invitation
     const existingInvitation = await Invitation.findOne({
       project: projectId,
-      receiver: userId,
+      receiver: receiverId,
       status: "pending",
     });
 
@@ -76,7 +78,7 @@ const sendInvitation = async (req, res) => {
     const invitation = await Invitation.create({
       project: projectId,
       sender: req.user.userId,
-      receiver: userId,
+      receiver: receiverId,
     });
 
     const populatedInvitation =
