@@ -7,7 +7,7 @@ import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
 const SOCKET_URL =
-   "http://localhost:5000" || "https://dev-collab-developer-collabaration.vercel.app/api";
+  "https://devcollab-developer-collabaration-hub.onrender.com/";
 
 
 const DEFAULT_CODE = `public class Main {

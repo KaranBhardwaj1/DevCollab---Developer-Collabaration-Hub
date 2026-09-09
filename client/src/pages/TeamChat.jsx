@@ -5,7 +5,7 @@ import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
 
-const SOCKET_URL = "http://localhost:5000" ||"https://dev-collab-developer-collabaration.vercel.app/api";
+const SOCKET_URL = "https://devcollab-developer-collabaration-hub.onrender.com/";
 
 const TeamChat = () => {
   const { id } = useParams();

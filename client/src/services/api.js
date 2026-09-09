@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
 
-  baseURL:   "http://localhost:5000/api" || "https://dev-collab-developer-collabaration.vercel.app/api",
+  baseURL:  "https://devcollab-developer-collabaration-hub.onrender.com/",
 
   headers: {
     "Content-Type": "application/json",
