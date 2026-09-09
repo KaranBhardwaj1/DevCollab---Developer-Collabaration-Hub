@@ -13,6 +13,7 @@ const messageRoutes = require("./routes/messageRoutes");
 const compilerRoutes = require("./routes/compilerRoutes");
 const questionRoutes = require("./routes/questionRoutes");
 const answerRoutes = require("./routes/answerRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const setupSocket = require("./socket/socket");
 
@@ -47,6 +48,7 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/compiler", compilerRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/answers", answerRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.json({
