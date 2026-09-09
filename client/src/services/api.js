@@ -1,11 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-<<<<<<< HEAD
-  baseURL:   "https://devcollab-developer-collabaration-hub.onrender.com/",
-=======
+
   baseURL:   "http://localhost:5000/api" || "https://dev-collab-developer-collabaration.vercel.app/api",
->>>>>>> 99a1cb1 (improved code)
+
   headers: {
     "Content-Type": "application/json",
   },
