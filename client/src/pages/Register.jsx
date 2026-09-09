@@ -25,7 +25,7 @@ const Register = () => {
     setMessage("");
 
     try {
-      await api.post("api/auth/register", form);
+      await api.post("/api/auth/register", form);
 
       setMessage("Registration successful!");
 

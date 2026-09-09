@@ -7,7 +7,7 @@ import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
 const SOCKET_URL =
-   import.meta.env.VITE_API_URL || "http://localhost:5000";
+   "http://localhost:5000" || "https://dev-collab-developer-collabaration.vercel.app";
 
 const DEFAULT_CODE = `public class Main {
     public static void main(String[] args) {

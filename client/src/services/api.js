@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
+  baseURL:   "http://localhost:5000/api" || "https://dev-collab-developer-collabaration-nine.vercel.app",
   headers: {
     "Content-Type": "application/json",
   },
@@ -17,7 +17,9 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
 export default api;
