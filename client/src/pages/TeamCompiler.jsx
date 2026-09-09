@@ -6,9 +6,7 @@ import { useParams } from "react-router-dom";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
-const SOCKET_URL =
-  "https://devcollab-developer-collabaration-hub.onrender.com/";
-
+const SOCKET_URL = "http://localhost:5000";
 
 const DEFAULT_CODE = `public class Main {
     public static void main(String[] args) {
