@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const http = require("http");
 const { Server } = require("socket.io");
 
 const connectDB = require("./config/db");
@@ -21,26 +20,32 @@ dotenv.config();
 
 const app = express();
 
-const server = http.createServer(app);
-
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
-  },
-});
+// --------------------
+// Middleware
+// --------------------
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://dev-collab-developer-collabaration-nine.vercel.app",
+    ],
+    credentials: true,
   })
 );
 
 app.use(express.json());
 
+// --------------------
+// Database
+// --------------------
+
 connectDB();
 
-// API routes
+// --------------------
+// API Routes
+// --------------------
+
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/invitations", invitationRoutes);
@@ -50,18 +55,35 @@ app.use("/api/questions", questionRoutes);
 app.use("/api/answers", answerRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
+// --------------------
+// Test Route
+// --------------------
+
 app.get("/", (req, res) => {
   res.json({
-    message: "DevCollab backend is running",
+    message: "DevCollab backend is running on Vercel 🚀",
   });
+});
+
+// --------------------
+// Socket.IO
+// --------------------
+
+const io = new Server({
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "https://dev-collab-developer-collabaration-nine.vercel.app",
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
 
 setupSocket(io);
 
-const PORT = process.env.PORT || 5000;
+// --------------------
+// Export for Vercel
+// --------------------
 
-server.listen(PORT, () => {
-  console.log(
-    `🚀 Server running on http://localhost:${PORT}`
-  );
-});
+module.exports = app;
