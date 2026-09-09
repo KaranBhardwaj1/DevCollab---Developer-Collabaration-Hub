@@ -58,30 +58,81 @@ A global developer community where developers can:
 
 ## 🏗️ System Architecture
 
-```text
-Developer
-    │
-    ▼
-React Frontend
-    │
-    ▼
-Express.js API
-    │
-    ├──────────────► Authentication
-    │
-    ├──────────────► Project & Team Management
-    │
-    ├──────────────► Tasks
-    │
-    ├──────────────► Team Chat
-    │
-    ├──────────────► DevConnect
-    │
-    └──────────────► Compiler
-                       │
-                       ▼
-                  Code Execution
-                       
-    │
-    ▼
-MongoDB Atlas
+                         ┌─────────────────────────────┐
+                         │       DEVELOPER / USER      │
+                         │                             │
+                         │  Login / Register           │
+                         │  Projects & Tasks           │
+                         │  Team Chat                  │
+                         │  DevConnect Q&A             │
+                         │  Team / Global Compiler     │
+                         └──────────────┬──────────────┘
+                                        │
+                                        │ HTTPS / REST API
+                                        ▼
+              ┌──────────────────────────────────────────────┐
+              │              FRONTEND LAYER                  │
+              │                                              │
+              │              React + Vite                    │
+              │              Tailwind CSS                    │
+              │              React Router                    │
+              │              Axios                           │
+              │                                              │
+              │  Dashboard | Projects | Tasks | Chat         │
+              │  DevConnect | Compiler | Settings            │
+              └──────────────────────┬───────────────────────┘
+                                     │
+                                     │ HTTP Requests
+                                     ▼
+              ┌──────────────────────────────────────────────┐
+              │               BACKEND LAYER                  │
+              │                                              │
+              │              Node.js + Express               │
+              │                                              │
+              │  ┌────────────┐    ┌──────────────────────┐  │
+              │  │ Middleware │───▶│ Authentication       │ │
+              │  │ JWT        │    │ & Authorization       │ │
+              │  └────────────┘    └──────────────────────┘  │
+              │                                              │
+              │              API ROUTES / CONTROLLERS        │
+              │                         │                    │
+              │       ┌─────────────────┼────────────────┐   │
+              │       ▼                 ▼                ▼   │
+              │  Project & Task    DevConnect        Compiler│
+              │     Service        Q&A Service         Service│
+              │       │                 │                │   │
+              │       └─────────────────┼────────────────┘   │
+              │                         │                    │
+              └─────────────────────────┼────────────────────┘
+                                        │
+                    ┌───────────────────┴──────────────────┐
+                    │                                      │
+                    ▼                                      ▼
+       ┌────────────────────────┐              ┌──────────────────────┐
+       │      MongoDB Atlas     │              │      Judge0 API      │
+       │                        │              │                      │
+       │  Users                 │              │  Code Submission     │
+       │  Projects              │              │  Compilation         │
+       │  Tasks                 │              │  Execution           │
+       │  Messages              │              │  Output              │
+       │  Questions             │              └──────────────────────┘
+       │  Answers               │
+       │  Invitations           │
+       └────────────────────────┘
+
+
+                  ┌──────────────────────────────┐
+                  │          SOCKET.IO           │
+                  │                              │
+                  │     Real-Time Communication  │
+                  │                              │
+                  │     Team Chat                │
+                  │     Instant Messages         │
+                  │     Live Updates             │
+                  └──────────────▲───────────────┘
+                                 │
+                                 │ WebSocket
+                                 │
+                         ┌───────┴────────┐
+                         │ React Frontend │
+                         └────────────────┘
