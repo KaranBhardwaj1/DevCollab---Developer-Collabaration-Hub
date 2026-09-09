@@ -1,84 +1,15 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
 import { Link } from "react-router-dom";
+import api from "../services/api";
+
+const empty = { name: "", description: "", startDate: "", deadline: "", technologies: "" };
 
 const Projects = () => {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchProjects = async () => {
-    try {
-      const response = await api.get("/projects");
-
-      setProjects(response.data.projects);
-    } catch (error) {
-      console.error(
-        error.response?.data?.message || error.message
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  if (loading) {
-    return <p>Loading projects...</p>;
-  }
-
-  return (
-    <div className="space-y-6">
-
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">
-          Projects
-        </h1>
-
-        <p className="mt-1 text-sm text-slate-500">
-          Manage your development projects and teams.
-        </p>
-      </div>
-
-      {projects.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
-          <p className="text-slate-500">
-            You haven't created any projects yet.
-          </p>
-        </div>
-      ) : (
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {projects.map((project) => (
-            <Link
-  key={project._id}
-  to={`/projects/${project._id}`}
-  className="block rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
->
-  <h2 className="text-lg font-semibold text-slate-900">
-    {project.name}
-  </h2>
-
-  <p className="mt-2 text-sm text-slate-500">
-    {project.description || "No description"}
-  </p>
-
-  <div className="mt-4 flex items-center justify-between">
-    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
-      {project.status}
-    </span>
-
-    <span className="text-sm text-slate-500">
-      {project.members.length} member
-      {project.members.length !== 1 ? "s" : ""}
-    </span>
-  </div>
-</Link>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+  const [projects,setProjects]=useState([]); const [form,setForm]=useState(empty); const [show,setShow]=useState(false); const [loading,setLoading]=useState(true); const [saving,setSaving]=useState(false); const [error,setError]=useState("");
+  const load=async()=>{try{setProjects((await api.get("/projects")).data.projects||[]);}catch(e){setError(e.response?.data?.message||"Unable to load projects");}finally{setLoading(false);}};
+  useEffect(()=>{load();},[]);
+  const create=async(e)=>{e.preventDefault();try{setSaving(true);setError("");await api.post("/projects",{...form,technologies:form.technologies.split(",").map(x=>x.trim()).filter(Boolean)});setForm(empty);setShow(false);await load();}catch(e){setError(e.response?.data?.message||"Unable to create project");}finally{setSaving(false);}};
+  if(loading)return <div className="rounded-xl bg-white p-8 text-slate-500">Loading projects...</div>;
+  return <div className="space-y-6"><div className="flex flex-col justify-between gap-4 md:flex-row md:items-center"><div><h1 className="text-2xl font-bold">Projects</h1><p className="mt-1 text-sm text-slate-500">Create and manage your developer teams.</p></div><button onClick={()=>setShow(!show)} className="rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white">+ Create Project</button></div>{error&&<div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>}{show&&<form onSubmit={create} className="rounded-xl border bg-white p-6"><h2 className="text-lg font-semibold">New Project</h2><div className="mt-4 grid gap-4 md:grid-cols-2"><input required placeholder="Project name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} className="rounded-lg border p-3"/><input placeholder="Technologies: React, Node.js" value={form.technologies} onChange={e=>setForm({...form,technologies:e.target.value})} className="rounded-lg border p-3"/><textarea placeholder="Description" rows="4" value={form.description} onChange={e=>setForm({...form,description:e.target.value})} className="rounded-lg border p-3 md:col-span-2"/><div><label className="text-xs text-slate-500">Start date</label><input type="date" value={form.startDate} onChange={e=>setForm({...form,startDate:e.target.value})} className="mt-1 w-full rounded-lg border p-3"/></div><div><label className="text-xs text-slate-500">Deadline</label><input type="date" value={form.deadline} onChange={e=>setForm({...form,deadline:e.target.value})} className="mt-1 w-full rounded-lg border p-3"/></div></div><div className="mt-4 flex gap-3"><button disabled={saving} className="rounded-lg bg-slate-900 px-5 py-2 text-sm text-white">{saving?"Creating...":"Create Project"}</button><button type="button" onClick={()=>setShow(false)} className="rounded-lg border px-5 py-2 text-sm">Cancel</button></div></form>}{projects.length===0?<div className="rounded-xl border border-dashed bg-white p-12 text-center"><div className="text-4xl">📁</div><h2 className="mt-3 font-semibold">No projects yet</h2><p className="mt-1 text-sm text-slate-500">Create your first project to start collaborating.</p></div>:<div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">{projects.map(p=><Link key={p._id} to={`/projects/${p._id}`} className="rounded-xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"><div className="flex justify-between gap-3"><h2 className="text-lg font-semibold">{p.name}</h2><span className="rounded-full bg-slate-100 px-2 py-1 text-xs capitalize">{p.status}</span></div><p className="mt-2 line-clamp-2 text-sm text-slate-500">{p.description||"No description"}</p><div className="mt-5 flex items-center justify-between text-xs text-slate-500"><span>👥 {p.members.length} members</span><span>Open →</span></div>{p.technologies?.length>0&&<div className="mt-4 flex flex-wrap gap-2">{p.technologies.slice(0,4).map(t=><span key={t} className="rounded-full bg-purple-50 px-2 py-1 text-xs text-purple-600">{t}</span>)}</div>}</Link>)}</div>}</div>;
 };
-
 export default Projects;

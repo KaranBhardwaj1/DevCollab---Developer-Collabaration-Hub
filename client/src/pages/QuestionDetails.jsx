@@ -1,11 +1,12 @@
 import { useEffect,useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import AnswerCard from "../components/AnswerCard";
 
 const QuestionDetails=()=>{
 
 const{id}=useParams();
+const navigate=useNavigate();
 
 const[question,setQuestion]=useState(null);
 
@@ -78,6 +79,8 @@ return(
 )}
 
 <button
+
+onClick={()=>navigate("/global-compiler")}
 
 className="mt-5 bg-blue-600 text-white px-5 py-3 rounded"
 

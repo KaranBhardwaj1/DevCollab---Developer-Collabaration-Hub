@@ -1,0 +1,12 @@
+import { useEffect, useState } from "react";
+import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
+
+const Settings = () => {
+  const { user, logout, setUser } = useAuth();
+  const [form,setForm]=useState({name:"",bio:"",skills:""}); const [message,setMessage]=useState(""); const [error,setError]=useState("");
+  useEffect(()=>{if(user)setForm({name:user.name||"",bio:user.bio||"",skills:(user.skills||[]).join(", ")});},[user]);
+  const save=async(e)=>{e.preventDefault();try{const r=await api.patch("/users/me",{name:form.name,bio:form.bio,skills:form.skills.split(",").map(x=>x.trim()).filter(Boolean)});const updated = {...user,...r.data.user}; localStorage.setItem("user",JSON.stringify(updated)); setUser(updated);setMessage("Profile updated successfully.");}catch(e){setError(e.response?.data?.message||"Unable to update profile");}};
+  return <div className="max-w-3xl space-y-6"><div><h1 className="text-2xl font-bold">Settings</h1><p className="text-sm text-slate-500">Manage your developer profile.</p></div><form onSubmit={save} className="rounded-xl border bg-white p-6 space-y-4"><div><label className="text-sm font-medium">Name</label><input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} className="mt-2 w-full rounded-lg border p-3"/></div><div><label className="text-sm font-medium">Email</label><input disabled value={user?.email||""} className="mt-2 w-full rounded-lg border bg-slate-50 p-3 text-slate-500"/></div><div><label className="text-sm font-medium">Bio</label><textarea rows="4" value={form.bio} onChange={e=>setForm({...form,bio:e.target.value})} className="mt-2 w-full rounded-lg border p-3"/></div><div><label className="text-sm font-medium">Skills</label><input value={form.skills} onChange={e=>setForm({...form,skills:e.target.value})} placeholder="React, Node.js, MongoDB" className="mt-2 w-full rounded-lg border p-3"/></div>{(message||error)&&<p className={error?"text-sm text-red-500":"text-sm text-green-600"}>{error||message}</p>}<button className="rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white">Save Changes</button></form><div className="rounded-xl border border-red-200 bg-white p-6"><h2 className="font-semibold text-red-600">Account</h2><p className="mt-1 text-sm text-slate-500">Sign out from this device.</p><button onClick={logout} className="mt-4 rounded-lg border border-red-200 px-4 py-2 text-sm text-red-600">Logout</button></div></div>;
+};
+export default Settings;
