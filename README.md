@@ -4,7 +4,6 @@ DevCollab is a full-stack web platform designed to bring **developer collaborati
 
 Instead of using different platforms for chatting, managing projects, asking programming questions, and testing code, developers can perform these activities through a single platform.
 
----
 
 ## Features
 
