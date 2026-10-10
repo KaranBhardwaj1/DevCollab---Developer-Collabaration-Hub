@@ -24,23 +24,37 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
-  },
-});
+// Allowed frontend URLs
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://dev-collab-developer-collabaration-nine.vercel.app",
+  "https://dev-collab-developer-collabaration-hub-6aic-262bqqdsf.vercel.app",
+];
 
+// Express CORS
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true,
   })
 );
 
 app.use(express.json());
 
+// Socket.IO CORS
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+// Connect to MongoDB
 connectDB();
 
+// API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/invitations", invitationRoutes);
@@ -52,16 +66,18 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
+// Backend health check
 app.get("/", (req, res) => {
   res.json({
     message: "DevCollab backend is running 🚀",
   });
 });
 
+// Initialize real-time events
 setupSocket(io);
 
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 DevCollab server running on http://localhost:${PORT}`);
+  console.log(`🚀 DevCollab server running on port ${PORT}`);
 });
